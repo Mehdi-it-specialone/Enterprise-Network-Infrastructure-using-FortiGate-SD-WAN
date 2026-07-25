@@ -1,4 +1,4 @@
-#Design and Implementation of a Highly Available Enterprise Network Infrastructure using FortiGate SD-WAN, Site-to-Site IPsec VPN, VLAN Segmentation and Cisco Layer 3 Switching in EVE-NG
+Design and Implementation of a Highly Available Enterprise Network Infrastructure using FortiGate SD-WAN, Site-to-Site IPsec VPN, VLAN Segmentation and Cisco Layer 3 Switching in EVE-NG
 
 ## Overview
 
