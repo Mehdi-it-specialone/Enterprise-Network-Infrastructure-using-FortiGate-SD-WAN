@@ -49,29 +49,6 @@ The complete infrastructure was designed and tested in the EVE-NG network simula
 
 ---
 
-## Addressing Plan
-
-### Headquarters
-
-| VLAN | Network |
-|-------|---------|
-| Servers | 10.10.10.0/24 |
-| IT | 10.10.20.0/24 |
-| HR | 10.10.30.0/24 |
-| Sales | 10.10.40.0/24 |
-| Management | 192.168.99.0/24 |
-| Transit | 10.255.255.0/30 |
-
-### Branch
-
-| VLAN | Network |
-|-------|---------|
-| Users | 10.20.20.0/24 |
-| Management | 192.168.199.0/24 |
-| Transit | 10.255.254.0/30 |
-
----
-
 ## Features
 
 - SD-WAN Failover
