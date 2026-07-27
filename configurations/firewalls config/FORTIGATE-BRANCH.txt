@@ -1,0 +1,241 @@
+!
+! =====================================================
+! Device : FORTIGATE-BRANCH
+! Role   : Branch SD-WAN Edge Firewall
+! Firmware : FortiOS 7.0.12
+! =====================================================
+
+#######################################################
+# System DNS
+#######################################################
+
+config system dns
+    set primary 96.45.45.45
+    set secondary 96.45.46.46
+end
+
+#######################################################
+# Interfaces
+#######################################################
+
+config system interface
+
+    edit "port1"
+        set alias "WAN1"
+        set ip 100.64.3.2/30
+        set allowaccess ping https ssh
+        set role wan
+    next
+
+    edit "port2"
+        set alias "WAN2"
+        set ip 100.64.4.2/30
+        set allowaccess ping https ssh
+        set role wan
+    next
+
+    edit "port3"
+        set alias "LAN"
+        set ip 10.255.254.1/30
+        set allowaccess ping https ssh
+        set role lan
+    next
+
+    edit "port4"
+        set alias "MANAGEMENT"
+        set ip 192.168.122.166/24
+        set allowaccess ping https ssh http
+    next
+
+end
+
+#######################################################
+# SD-WAN Configuration
+#######################################################
+
+config system sdwan
+
+    set status enable
+
+    config members
+
+        edit 1
+            set interface "port1"
+            set gateway 100.64.3.1
+        next
+
+        edit 2
+            set interface "port2"
+            set gateway 100.64.4.1
+            set priority 2
+        next
+
+        edit 3
+            set interface "BR-HQ-WAN1"
+        next
+
+        edit 4
+            set interface "BR-HQ-WAN2"
+            set priority 2
+        next
+
+    end
+
+    config health-check
+
+        edit "GoogleDns"
+            set server "8.8.8.8"
+            set members 1 2
+        next
+
+    end
+
+    config service
+
+        edit 1
+            set name "INTERNET"
+            set dst "all"
+            set priority-members 1 2
+        next
+
+        edit 2
+            set name "VPN-HQ"
+            set dst "hq-lan"
+            set priority-members 3 4
+        next
+
+    end
+
+end
+
+#######################################################
+# Static Routes
+#######################################################
+
+config router static
+
+    edit 1
+        set dst 10.20.0.0/16
+        set gateway 10.255.254.2
+        set device "port3"
+    next
+
+    edit 2
+        set dst 192.168.199.0/24
+        set gateway 10.255.254.2
+        set device "port3"
+    next
+
+    edit 3
+        set dst 10.10.0.0/16
+        set sdwan-zone "virtual-wan-link"
+    next
+
+    edit 4
+        set sdwan-zone "virtual-wan-link"
+    next
+
+end
+
+#######################################################
+# IPsec VPN Phase 1
+#######################################################
+
+config vpn ipsec phase1-interface
+
+    edit "BR-HQ-WAN1"
+        set interface "port1"
+        set ike-version 2
+        set remote-gw 100.64.1.2
+        set proposal des-sha256
+        set dhgrp 14
+        set psksecret <REDACTED>
+    next
+
+    edit "BR-HQ-WAN2"
+        set interface "port2"
+        set ike-version 2
+        set remote-gw 100.64.2.2
+        set proposal des-sha256
+        set dhgrp 14
+        set psksecret <REDACTED>
+    next
+
+end
+
+#######################################################
+# IPsec VPN Phase 2
+#######################################################
+
+config vpn ipsec phase2-interface
+
+    edit "BR-HQ-WAN1"
+        set phase1name "BR-HQ-WAN1"
+        set proposal des-sha256
+        set dhgrp 14
+    next
+
+    edit "BR-HQ-WAN2"
+        set phase1name "BR-HQ-WAN2"
+        set proposal des-sha256
+        set dhgrp 14
+    next
+
+end
+
+#######################################################
+# Firewall Address Objects
+#######################################################
+
+config firewall address
+
+    edit "hq-lan"
+        set subnet 10.10.0.0/16
+    next
+
+end
+
+#######################################################
+# Firewall Policies
+#######################################################
+
+config firewall policy
+
+    edit 1
+        set name "LAN-TO-INTERNET"
+        set srcintf "port3"
+        set dstintf "virtual-wan-link"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set service "ALL"
+        set schedule "always"
+        set nat enable
+        set logtraffic all
+    next
+
+    edit 2
+        set name "HQ-TO-BRANCH"
+        set srcintf "virtual-wan-link"
+        set dstintf "port3"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set service "ALL"
+        set schedule "always"
+        set logtraffic all
+    next
+
+    edit 3
+        set name "BRANCH-TO-HQ"
+        set srcintf "port3"
+        set dstintf "virtual-wan-link"
+        set srcaddr "all"
+        set dstaddr "all"
+        set action accept
+        set service "ALL"
+        set schedule "always"
+        set logtraffic all
+    next
+
+end
