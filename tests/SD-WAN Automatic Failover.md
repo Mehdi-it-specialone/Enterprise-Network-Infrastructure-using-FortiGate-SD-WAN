@@ -79,8 +79,4 @@ The validation screenshot should contain the following components:
 
 ## Demonstration Video
 
-A complete demonstration of the SD-WAN automatic failover and recovery process is available in the repository.
-
-**Video:**
-
-`demo/SD-WAN_Failover_Demo.mp4`
+📹 **[Watch the SD-WAN Failover Demonstration]([https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/view?usp=sharing](https://drive.google.com/file/d/17ZAJylAmo94GTm-LHtl4z-uWCiLcw5pT/view))**
