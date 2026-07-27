@@ -1,0 +1,78 @@
+!
+! =====================================================
+! Device: BACKBONE-ISP
+! Role  : ISP Backbone Router
+! Site  : Core ISP Network
+! =====================================================
+
+hostname BACKBONE-ISP
+
+!
+! =====================================================
+! WAN Interfaces
+! =====================================================
+
+interface Ethernet0/0
+ description INTERNET-UPLINK
+ ip address dhcp
+ ip nat outside
+
+interface Ethernet0/1
+ description TO-ISP-R1-HQ
+ ip address 172.16.1.1 255.255.255.252
+ ip nat inside
+
+interface Ethernet0/2
+ description TO-ISP-R2-HQ
+ ip address 172.16.2.1 255.255.255.252
+ ip nat inside
+
+interface Ethernet0/3
+ description TO-ISP-R1-BRANCH
+ ip address 172.16.3.1 255.255.255.252
+ ip nat inside
+
+interface Ethernet1/0
+ description TO-ISP-R2-BRANCH
+ ip address 172.16.4.1 255.255.255.252
+ ip nat inside
+
+!
+! =====================================================
+! NAT Configuration
+! =====================================================
+
+ip nat inside source list 1 interface Ethernet0/0 overload
+
+!
+! =====================================================
+! Static Routing
+! =====================================================
+
+ip route 100.64.1.0 255.255.255.252 172.16.1.2
+ip route 100.64.2.0 255.255.255.252 172.16.2.2
+ip route 100.64.3.0 255.255.255.252 172.16.3.2
+ip route 100.64.4.0 255.255.255.252 172.16.4.2
+
+ip route 0.0.0.0 0.0.0.0 dhcp
+
+!
+! =====================================================
+! Access Lists
+! =====================================================
+
+access-list 1 permit 100.64.0.0 0.0.255.255
+access-list 1 permit 172.16.0.0 0.0.255.255
+
+!
+! =====================================================
+! NTP
+! =====================================================
+
+ntp server 34.202.215.187
+ntp server pool.ntp.org
+
+!
+! ============================
+! End of Configuration
+! ============================
