@@ -46,7 +46,7 @@ The complete infrastructure was designed and tested in the EVE-NG network simula
 - SD-WAN
 - IPsec VPN
 - Layer 3 Core Switches
-- Distribution Switch
+- Distribution Switches
 - Access Switches
 - Enterprise VLANs
 
