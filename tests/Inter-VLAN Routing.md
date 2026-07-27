@@ -31,6 +31,6 @@ Verify that devices located in different VLANs can communicate successfully thro
 The successful communication between VLAN 30 and VLAN 20 confirms that Inter-VLAN routing is correctly configured on the Cisco Layer 3 Core Switch and that routing between departmental networks is fully operational.
 
 ## Evidence
-![VLAN Communication](../screenshots/vlan_ping.png)
+![Inter-VLAN Routing](../screenshots/Inter-VLAN_Routing.png)
 
 *Figure 2 – Successful ICMP communication between hosts located in different VLANs through the Core Layer 3 Switch.*
