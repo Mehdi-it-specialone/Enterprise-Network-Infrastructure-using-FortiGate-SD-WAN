@@ -1,4 +1,4 @@
-Design and Implementation of a Highly Available Enterprise Network Infrastructure using FortiGate SD-WAN, Site-to-Site IPsec VPN, VLAN Segmentation and Cisco Layer 3 Switching in EVE-NG
+# Design and Implementation of a Highly Available Enterprise Network Infrastructure using FortiGate SD-WAN,
 
 ## Overview
 
@@ -30,6 +30,8 @@ The complete infrastructure was designed and tested in the EVE-NG network simula
 - Cisco IOS
 - Layer 3 Switching
 - VLAN
+- STP
+- ETHERCHANNEL
 - Static Routing
 - High Availability
 - EVE-NG
@@ -44,6 +46,7 @@ The complete infrastructure was designed and tested in the EVE-NG network simula
 - SD-WAN
 - IPsec VPN
 - Layer 3 Core Switches
+- Distribution Switch
 - Access Switches
 - Enterprise VLANs
 
@@ -80,13 +83,13 @@ The complete infrastructure was designed and tested in the EVE-NG network simula
 ## Repository Structure
 
 ```
-report/
-presentation/
-topology/
 addressing/
 configurations/
+report/
 screenshots/
 tests/
+topology/
+
 ```
 
 ---
