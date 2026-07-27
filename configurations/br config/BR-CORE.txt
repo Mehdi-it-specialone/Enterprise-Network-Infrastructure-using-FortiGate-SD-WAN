@@ -1,0 +1,160 @@
+!
+! =====================================================
+! Device: BR-CORE
+! Role  : Layer 3 Core Switch
+! Site  : Branch Office
+! =====================================================
+
+hostname BR-CORE
+
+!
+! =====================================================
+! Authentication
+! =====================================================
+
+enable secret 5 $1$seS3$DPRLpikxrkM3nQ.WYtUpX0
+username admin privilege 15 secret 5 $1$rgQG$TevJ1OvWfqIi3YTQWM0Vp.
+
+!
+! =====================================================
+! Global Configuration
+! =====================================================
+
+service password-encryption
+
+no ip domain-lookup
+ip domain-name project.local
+
+ip name-server 8.8.8.8
+ip name-server 8.8.4.4
+
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 10,20,30,40,99 priority 4096
+
+!
+! =====================================================
+! DHCP Configuration
+! =====================================================
+
+ip dhcp excluded-address 10.20.10.1 10.20.10.20
+ip dhcp excluded-address 10.20.20.1 10.20.20.20
+ip dhcp excluded-address 10.20.30.1 10.20.30.20
+ip dhcp excluded-address 10.20.40.1 10.20.40.20
+ip dhcp excluded-address 192.168.199.1 192.168.199.20
+
+ip dhcp pool VLAN10
+ network 10.20.10.0 255.255.255.0
+ default-router 10.20.10.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool VLAN20
+ network 10.20.20.0 255.255.255.0
+ default-router 10.20.20.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool VLAN30
+ network 10.20.30.0 255.255.255.0
+ default-router 10.20.30.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool VLAN40
+ network 10.20.40.0 255.255.255.0
+ default-router 10.20.40.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool MGMT
+ network 192.168.199.0 255.255.255.0
+ default-router 192.168.199.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+!
+! =====================================================
+! EtherChannel
+! =====================================================
+
+interface Port-channel1
+ description LACP-TO-ACCESS-BRANCH
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! =====================================================
+! Physical Interfaces
+! =====================================================
+
+interface Ethernet0/0
+ description TO-FORTIGATE
+ no switchport
+ ip address 10.255.254.2 255.255.255.252
+
+interface Ethernet0/1
+ description LACP-TO-ACCESS-BRANCH
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 1 mode active
+
+interface Ethernet0/2
+ description LACP-TO-ACCESS-BRANCH
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 1 mode active
+
+!
+! =====================================================
+! VLAN Interfaces
+! =====================================================
+
+interface Vlan10
+ description SERVERS
+ ip address 10.20.10.1 255.255.255.0
+
+interface Vlan20
+ description IT
+ ip address 10.20.20.1 255.255.255.0
+
+interface Vlan30
+ description HR
+ ip address 10.20.30.1 255.255.255.0
+
+interface Vlan40
+ description SALES
+ ip address 10.20.40.1 255.255.255.0
+
+interface Vlan99
+ description MANAGEMENT
+ ip address 192.168.199.1 255.255.255.0
+
+!
+! =====================================================
+! Routing
+! =====================================================
+
+ip route 0.0.0.0 0.0.0.0 10.255.254.1
+
+!
+! =====================================================
+! Remote Management
+! =====================================================
+
+ip ssh version 2
+
+line vty 0 4
+ login local
+ transport input ssh
+
+!
+! ============================
+! End of Configuration
+! ============================

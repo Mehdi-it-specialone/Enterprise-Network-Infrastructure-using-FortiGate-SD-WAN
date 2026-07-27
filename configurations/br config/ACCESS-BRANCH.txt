@@ -1,0 +1,109 @@
+!
+! =====================================================
+! Device: ACCESS-BRANCH
+! Role  : Access Layer Switch
+! Site  : Branch Office
+! =====================================================
+
+hostname ACCESS-BRANCH
+
+!
+! =====================================================
+! Authentication
+! =====================================================
+
+enable secret 5 $1$mmW3$IfYau7MA0VQJKEuyrhoLl0
+username admin privilege 15 secret 5 $1$eNMb$f48i9CTSIiSUq3EDNJyXk0
+
+!
+! =====================================================
+! Global Configuration
+! =====================================================
+
+service password-encryption
+
+no ip domain-lookup
+ip domain-name project.local
+
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+
+!
+! =====================================================
+! EtherChannel
+! =====================================================
+
+interface Port-channel1
+ description LACP-TO-BR-CORE
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! =====================================================
+! Uplink Interfaces
+! =====================================================
+
+interface Ethernet0/0
+ description LACP-TO-BR-CORE
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 1 mode active
+
+interface Ethernet0/1
+ description LACP-TO-BR-CORE
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 1 mode active
+
+!
+! =====================================================
+! Access Interfaces
+! =====================================================
+
+interface Ethernet0/2
+ description SERVER-PC
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+interface Ethernet0/3
+ description IT-PC
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+interface Ethernet1/0
+ description HR-PC
+ switchport mode access
+ switchport access vlan 30
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+interface Ethernet1/1
+ description SALES-PC
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+!
+! =====================================================
+! Remote Management
+! =====================================================
+
+line vty 0 4
+ login local
+ transport input ssh
+
+!
+! ============================
+! End of Configuration
+! ============================
