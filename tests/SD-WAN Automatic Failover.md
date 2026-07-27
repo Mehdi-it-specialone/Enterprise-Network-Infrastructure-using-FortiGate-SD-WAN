@@ -72,7 +72,7 @@ The validation screenshot should contain the following components:
 4. **IPsec VPN Status**
 
    * VPN tunnel established and operational.
-
+![SD-WAN Automatic Failover](../screenshots/SD-WAN_Failover_Validation.png)
 *Figure 5 – SD-WAN operational status showing active WAN members, enterprise topology, Internet connectivity, and IPsec VPN status.*
 
 ---
