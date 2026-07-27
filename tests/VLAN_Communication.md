@@ -31,8 +31,6 @@ The communication between hosts belonging to VLAN 20 was successfully establishe
 
 ## Evidence
 
-> Insert the screenshot showing the successful ping between both devices.
+> ![VLAN Communication](../screenshots/VLAN_Communication.png)
 
-Example image:
-
-screenshots/VLAN_Communication.png
+  *Figure 1 – Successful ICMP communication between two hosts in VLAN 20.*
