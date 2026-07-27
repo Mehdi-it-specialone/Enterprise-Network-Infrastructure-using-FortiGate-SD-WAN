@@ -171,13 +171,13 @@ config vpn ipsec phase2-interface
 
     edit "BR-HQ-WAN1"
         set phase1name "BR-HQ-WAN1"
-        set proposal des-sha256
+        set proposal aes-sha256
         set dhgrp 14
     next
 
     edit "BR-HQ-WAN2"
         set phase1name "BR-HQ-WAN2"
-        set proposal des-sha256
+        set proposal aes-sha256
         set dhgrp 14
     next
 
