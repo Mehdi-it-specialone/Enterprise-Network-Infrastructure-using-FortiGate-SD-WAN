@@ -77,6 +77,6 @@ The validation screenshot should contain the following components:
 
 ---
 
-## Demonstration Video
+## Project Demonstration
 
-📹 **[Watch the SD-WAN Failover Demonstration]([[https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/view?usp=sharing](https://drive.google.com/file/d/17ZAJylAmo94GTm-LHtl4z-uWCiLcw5pT/view](https://drive.google.com/file/d/17ZAJylAmo94GTm-LHtl4z-uWCiLcw5pT/view?usp=sharing)))**
+The complete SD-WAN failover demonstration can be viewed here: https://drive.google.com/file/d/17ZAJylAmo94GTm-LHtl4z-uWCiLcw5pT/view?usp=sharing
