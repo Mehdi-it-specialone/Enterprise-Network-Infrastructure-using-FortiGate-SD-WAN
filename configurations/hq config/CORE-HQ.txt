@@ -1,0 +1,153 @@
+hostname CORE-HQ
+
+!
+! ===========================
+! User Authentication
+! ===========================
+enable secret 5 $1$HCgi$G/3QWXfK2iXSRogQTsPCx1
+username admin privilege 15 secret 5 $1$qHo8$stROkrPld4/VODp56g0u80
+
+!
+! ===========================
+! Global Settings
+! ===========================
+service password-encryption
+ip domain-name project.local
+ip name-server 8.8.8.8
+ip name-server 8.8.4.4
+
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 10,20,30,40,99 priority 24576
+
+!
+! ===========================
+! DHCP Configuration
+! ===========================
+ip dhcp excluded-address 10.10.10.1 10.10.10.99
+ip dhcp excluded-address 10.10.20.1 10.10.20.99
+ip dhcp excluded-address 10.10.30.1 10.10.30.99
+ip dhcp excluded-address 10.10.40.1 10.10.40.99
+
+ip dhcp pool VLAN10
+ network 10.10.10.0 255.255.255.0
+ default-router 10.10.10.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool VLAN20
+ network 10.10.20.0 255.255.255.0
+ default-router 10.10.20.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool VLAN30
+ network 10.10.30.0 255.255.255.0
+ default-router 10.10.30.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+ip dhcp pool VLAN40
+ network 10.10.40.0 255.255.255.0
+ default-router 10.10.40.1
+ dns-server 8.8.8.8 1.1.1.1
+ domain-name project.local
+
+!
+! ===========================
+! EtherChannel
+! ===========================
+interface Port-channel1
+ description LACP-TO-DIST-HQ-1
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+interface Port-channel2
+ description LACP-TO-DIST-HQ-2
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! ===========================
+! Interfaces
+! ===========================
+interface Ethernet0/0
+ description TO-FORTIGATE
+ no switchport
+ ip address 10.255.255.2 255.255.255.252
+
+interface Ethernet0/1
+ description UPLINK-TO-DIST-HQ-1
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 1 mode active
+
+interface Ethernet0/2
+ description UPLINK-TO-DIST-HQ-1
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 1 mode active
+
+interface Ethernet0/3
+ description UPLINK-TO-DIST-HQ-2
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 2 mode active
+
+interface Ethernet1/0
+ description UPLINK-TO-DIST-HQ-2
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 2 mode active
+
+!
+! ===========================
+! VLAN Interfaces
+! ===========================
+interface Vlan10
+ description SERVERS
+ ip address 10.10.10.1 255.255.255.0
+ ip helper-address 10.255.255.1
+
+interface Vlan20
+ description IT
+ ip address 10.10.20.1 255.255.255.0
+
+interface Vlan30
+ description HR
+ ip address 10.10.30.1 255.255.255.0
+
+interface Vlan40
+ description SALES
+ ip address 10.10.40.1 255.255.255.0
+
+interface Vlan99
+ description MANAGEMENT
+ ip address 192.168.99.1 255.255.255.0
+
+!
+! ===========================
+! Routing
+! ===========================
+ip route 0.0.0.0 0.0.0.0 10.255.255.1
+
+!
+! ===========================
+! SSH
+! ===========================
+ip ssh version 2
+line vty 0 4
+ login local
+ transport input ssh

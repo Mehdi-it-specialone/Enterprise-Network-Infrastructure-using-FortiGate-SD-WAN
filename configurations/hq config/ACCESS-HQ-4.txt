@@ -1,0 +1,89 @@
+!
+! =====================================================
+! Device: ACCESS-HQ-4
+! Role  : Access Layer Switch
+! Site  : Headquarters (HQ)
+! =====================================================
+
+hostname ACCESS-HQ-4
+
+!
+! =====================================================
+! Authentication
+! =====================================================
+
+enable secret 5 $1$H.aD$b/LYKaW74cVSzCg6VcaJb.
+username admin privilege 15 secret 5 $1$N8k3$.iHHsDfi66zmuahg08uc6.
+
+!
+! =====================================================
+! Global Configuration
+! =====================================================
+
+service password-encryption
+
+no ip domain-lookup
+ip domain-name project.local
+
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree portfast edge default
+spanning-tree portfast edge bpduguard default
+
+!
+! =====================================================
+! Uplink Interface
+! =====================================================
+
+interface Ethernet0/0
+ description UPLINK-TO-DIST-HQ-2
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! =====================================================
+! Reserved Access Interfaces
+! =====================================================
+
+interface Ethernet0/1
+ description RESERVED
+ shutdown
+
+interface Ethernet0/2
+ description RESERVED
+ shutdown
+
+interface Ethernet0/3
+ description RESERVED
+ shutdown
+
+!
+! =====================================================
+! Management Interface
+! =====================================================
+
+interface Vlan99
+ description MANAGEMENT
+ ip address 192.168.99.24 255.255.255.0
+ shutdown
+
+ip default-gateway 192.168.99.1
+
+!
+! =====================================================
+! Remote Management
+! =====================================================
+
+ip ssh version 2
+
+line vty 0 4
+ exec-timeout 15 0
+ login local
+ transport input ssh
+
+!
+! ============================
+! End of Configuration
+! ============================

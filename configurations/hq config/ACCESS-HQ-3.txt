@@ -1,0 +1,90 @@
+!
+! =====================================================
+! Device: ACCESS-HQ-3
+! Role  : Access Layer Switch
+! Site  : Headquarters (HQ)
+! =====================================================
+
+hostname ACCESS-HQ-3
+
+!
+! =====================================================
+! Authentication
+! =====================================================
+
+enable secret 5 $1$5SYM$LOAi7GqlatG2tDp8CcpGB/
+username admin privilege 15 secret 5 $1$W2va$0hCGQwWjnHTexAXXZnOoX/
+
+!
+! =====================================================
+! Global Configuration
+! =====================================================
+
+service password-encryption
+
+no ip domain-lookup
+ip domain-name project.local
+
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree portfast edge default
+spanning-tree portfast edge bpduguard default
+
+!
+! =====================================================
+! Uplink Interface
+! =====================================================
+
+interface Ethernet0/0
+ description UPLINK-TO-DIST-HQ-2
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! =====================================================
+! Access Interfaces
+! =====================================================
+
+interface Ethernet0/1
+ description IT-PC
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+interface Ethernet0/2
+ description IT-PC-2
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast edge
+
+!
+! =====================================================
+! Management Interface
+! =====================================================
+
+interface Vlan99
+ description MANAGEMENT
+ ip address 192.168.99.23 255.255.255.0
+ shutdown
+
+ip default-gateway 192.168.99.1
+
+!
+! =====================================================
+! Remote Management
+! =====================================================
+
+ip ssh version 2
+
+line vty 0 4
+ exec-timeout 15 0
+ login local
+ transport input ssh
+
+!
+! ============================
+! End of Configuration
+! ============================

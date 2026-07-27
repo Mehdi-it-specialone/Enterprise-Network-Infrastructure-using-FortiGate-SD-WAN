@@ -1,0 +1,88 @@
+!
+! =====================================================
+! Device: ACCESS-HQ-2
+! Role  : Access Layer Switch
+! Site  : Headquarters (HQ)
+! =====================================================
+
+hostname ACCESS-HQ-2
+
+!
+! =====================================================
+! Authentication
+! =====================================================
+
+enable secret 5 $1$.GHD$FzDYgaVuGzrrV8PmSk4Hy1
+username admin privilege 15 secret 5 $1$Sh1E$Ltnd7xrlEtT/zEodopq5o0
+
+!
+! =====================================================
+! Global Configuration
+! =====================================================
+
+service password-encryption
+
+no ip domain-lookup
+ip domain-name project.local
+
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree portfast edge default
+spanning-tree portfast edge bpduguard default
+
+!
+! =====================================================
+! Uplink Interface
+! =====================================================
+
+interface Ethernet0/0
+ description UPLINK-TO-DIST-HQ-1
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+
+!
+! =====================================================
+! Access Interfaces
+! =====================================================
+
+interface Ethernet0/1
+ description SALES-PC
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast edge
+ spanning-tree bpduguard enable
+
+interface Ethernet0/2
+ description SALES-PC-2
+ switchport mode access
+ switchport access vlan 40
+ spanning-tree portfast edge
+
+!
+! =====================================================
+! Management Interface
+! =====================================================
+
+interface Vlan99
+ description MANAGEMENT
+ ip address 192.168.99.22 255.255.255.0
+
+ip default-gateway 192.168.99.1
+
+!
+! =====================================================
+! Remote Management
+! =====================================================
+
+ip ssh version 2
+
+line vty 0 4
+ exec-timeout 15 0
+ login local
+ transport input ssh
+
+!
+! ============================
+! End of Configuration
+! ============================

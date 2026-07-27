@@ -1,0 +1,101 @@
+!
+! =====================================================
+! Device: DIST-HQ-2
+! Role  : Distribution Layer Switch
+! Site  : Headquarters (HQ)
+! =====================================================
+
+hostname DIST-HQ-2
+
+!
+! =====================================================
+! Authentication
+! =====================================================
+
+enable secret 5 $1$v0CP$oCN.ZOcO3OHI1UdY/ykVK.
+username admin privilege 15 secret 5 $1$w.TE$HHXk30Qb3cl1MZzrRGRbk1
+
+!
+! =====================================================
+! Global Configuration
+! =====================================================
+
+no ip domain-lookup
+ip domain-name project.local
+
+spanning-tree mode pvst
+spanning-tree extend system-id
+
+!
+! =====================================================
+! EtherChannel
+! =====================================================
+
+interface Port-channel2
+ description LACP-TO-CORE-HQ
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! =====================================================
+! Physical Interfaces
+! =====================================================
+
+interface Ethernet0/0
+ description UPLINK-TO-CORE-HQ
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 2 mode active
+
+interface Ethernet0/1
+ description UPLINK-TO-CORE-HQ
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+ channel-group 2 mode active
+
+interface Ethernet0/2
+ description UPLINK-TO-ACCESS-HQ-3
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+interface Ethernet0/3
+ description UPLINK-TO-ACCESS-HQ-4
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 10,20,30,40,99
+
+!
+! =====================================================
+! Management Interface
+! =====================================================
+
+interface Vlan99
+ description MANAGEMENT
+ ip address 192.168.99.12 255.255.255.0
+
+ip default-gateway 192.168.99.1
+
+!
+! =====================================================
+! Remote Management
+! =====================================================
+
+ip ssh version 2
+
+line vty 0 4
+ login local
+ transport input ssh
+
+!
+! ============================
+! End of Configuration
+! ============================
