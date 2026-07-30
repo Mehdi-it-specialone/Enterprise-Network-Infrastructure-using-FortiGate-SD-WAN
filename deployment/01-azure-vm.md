@@ -76,9 +76,7 @@ The following inbound security rules were configured:
 * **HTTP – TCP 80:** allows HTTP traffic where required, for example HTTP-to-HTTPS redirection or web services.
 * **WireGuard – UDP 51820:** provides secure VPN connectivity to the virtualization environment. This port must remain publicly reachable so VPN clients can establish a connection.
 * **Cockpit – TCP 9090:** Cockpit is **not exposed to the public Internet**. Access is restricted to the WireGuard VPN subnet `10.200.200.0/24`.
-* **UltraVNC:** the public NSG rule was removed. Remote graphical access is no longer directly exposed through the Azure public IP.
 
-The `Source port ranges` for the SSH rule remains **Any**, because the restriction is applied using the source IP address. The destination port is restricted to TCP `22`.
 
 ![Azure Network Security](../screenshots/azure-network-security.png)
 
