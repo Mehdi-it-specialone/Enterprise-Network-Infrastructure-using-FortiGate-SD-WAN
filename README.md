@@ -85,6 +85,7 @@ The complete infrastructure was designed and tested in the EVE-NG network simula
 ```
 addressing/
 configurations/
+deployment/
 report/
 screenshots/
 tests/
