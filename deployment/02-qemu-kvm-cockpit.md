@@ -224,9 +224,9 @@ Configuration:
 | Format             | QCOW2    |
 | Bus                | VirtIO   |
 | Storage            | File     |
-| Current host usage | ~18.4 GB |
 
-The **300 GB** represents the virtual capacity available to the guest, while the QCOW2 file currently occupies approximately **18.4 GB** on the host.
+
+The **300 GB** represents the virtual capacity available.
 
 ---
 
