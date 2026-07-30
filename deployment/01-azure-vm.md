@@ -19,8 +19,8 @@ The virtualization host was deployed with the following configuration:
 | RAM              | 32 GB                   |
 | Architecture     | x86_64                  |
 | Virtualization   | Nested virtualization   |
-| Access           | SSH                     |
-| Public IP        | `20.244.33.221`     |
+| Access           | SSH / WireGuard VPN     |
+| Public IP        | `20.244.33.221`         |
 
 The Azure VM must support **nested virtualization**, since KVM will be running inside the Azure virtual machine.
 
@@ -57,31 +57,32 @@ After deployment, Azure provides a public IP address that can be used to establi
 
 A **Network Security Group (NSG)** was configured to control inbound traffic to the Azure virtual machine.
 
+The NSG was configured according to the principle of **least privilege**. Administrative services such as SSH and Cockpit are not exposed unnecessarily to the public Internet.
+
 The following inbound security rules were configured:
 
-| Priority | Name          |  Port | Protocol | Source          | Destination | Action |
-| -------: | ------------- | ----: | -------- | --------------- | ----------- | ------ |
-|      300 | SSH           |    22 | TCP      | `105.69.199.56` | Any         | Allow  |
-|      320 | HTTPS         |   443 | TCP      | Any             | Any         | Allow  |
-|      340 | HTTP          |    80 | TCP      | Any             | Any         | Allow  |
-|      350 | cockpit-port  |  9090 | TCP      | Any             | Any         | Allow  |
-|      370 | wireguard-vpn | 51820 | UDP      | Any             | Any         | Allow  |
-|      380 | ultra-vnc     | 32771 | TCP      | Any             | Any         | Allow  |
+| Priority | Name          |  Port | Protocol | Source                 | Destination | Action |
+| -------: | ------------- | ----: | -------- | ---------------------- | ----------- | ------ |
+|      300 | SSH-Admin     |    22 | TCP      | `<ADMIN_PUBLIC_IP>/32` | Any         | Allow  |
+|      320 | HTTPS         |   443 | TCP      | Any                    | Any         | Allow  |
+|      340 | HTTP          |    80 | TCP      | Any                    | Any         | Allow  |
+|      350 | WireGuard-VPN | 51820 | UDP      | Any                    | Any         | Allow  |
+|      360 | Cockpit-VPN   |  9090 | TCP      | `10.200.200.0/24`      | Any         | Allow  |
 
-These rules provide access to the services required by the infrastructure:
+### Security considerations
 
-* **SSH – TCP 22:** remote administration of the Ubuntu server. Access is restricted to the administrator's public IP address.
-* **HTTPS – TCP 443:** HTTPS-based services.
-* **HTTP – TCP 80:** HTTP-based services.
-* **Cockpit – TCP 9090:** access to the Cockpit web management interface.
-* **WireGuard – UDP 51820:** VPN connections to the virtualization environment.
-* **UltraVNC – TCP 32771:** remote graphical access for EVE-NG servers when required.
+* **SSH – TCP 22:** remote administration of the Ubuntu server. Access is restricted to the administrator's public IP address using a `/32` source range.
+* **HTTPS – TCP 443:** allows access to services that require HTTPS.
+* **HTTP – TCP 80:** allows HTTP traffic where required, for example HTTP-to-HTTPS redirection or web services.
+* **WireGuard – UDP 51820:** provides secure VPN connectivity to the virtualization environment. This port must remain publicly reachable so VPN clients can establish a connection.
+* **Cockpit – TCP 9090:** Cockpit is **not exposed to the public Internet**. Access is restricted to the WireGuard VPN subnet `10.200.200.0/24`.
+* **UltraVNC:** the public NSG rule was removed. Remote graphical access is no longer directly exposed through the Azure public IP.
+
+The `Source port ranges` for the SSH rule remains **Any**, because the restriction is applied using the source IP address. The destination port is restricted to TCP `22`.
 
 ![Azure Network Security](../screenshots/02-azure-network-security.png)
 
 **Figure 2 – Azure Network Security Group inbound rules**
-
-> **Security consideration:** SSH access is restricted to the administrator's public IP address instead of being exposed to all sources. Other services that do not require public access should also be restricted whenever possible.
 
 ---
 
@@ -161,38 +162,57 @@ This command was used to verify the Ubuntu host information and confirm that the
 
 The Azure VM serves as the main infrastructure host for several services used in the project.
 
+Administrative access is separated into two paths:
+
+* **SSH:** restricted to the administrator's public IP address.
+* **Cockpit:** accessible through the WireGuard VPN using the private VPN network.
+* **WireGuard:** publicly accessible on UDP port `51820` to establish the VPN connection.
+* **HTTP/HTTPS:** publicly accessible for services that require web connectivity.
+
 The resulting network access is:
 
 ```text
-                         Internet
-                            │
-                            ▼
-                  Azure Public IP
-                            │
-                            ▼
-                Network Security Group
-                            │
-          ┌─────────────────┼─────────────────┐
-          │                 │                 │
-          ▼                 ▼                 ▼
-       SSH :22          Cockpit :9090    WireGuard :51820
-          │                 │                 │
-          └─────────────────┼─────────────────┘
-                            ▼
-                     Ubuntu Server
-                            │
-                            ▼
-                       QEMU / KVM
-                            │
-                            ▼
-                         EVE-NG
+                              Internet
+                                  │
+                    ┌─────────────┴─────────────┐
+                    │                           │
+                    ▼                           ▼
+             SSH TCP/22                  WireGuard UDP/51820
+          Admin Public IP                       │
+                    │                           │
+                    │                           ▼
+                    │                    WireGuard VPN
+                    │                    10.200.200.0/24
+                    │                           │
+                    │                  ┌────────┴────────┐
+                    │                  │                 │
+                    │                  ▼                 ▼
+                    │            Cockpit :9090      Other Services
+                    │                  │
+                    └──────────────────┼─────────────────┐
+                                       ▼                 │
+                                Ubuntu Server            │
+                                       │                 │
+                                       ▼                 │
+                                  QEMU / KVM             │
+                                       │                 │
+                                       ▼                 │
+                                    EVE-NG               │
 ```
 
-The Azure NSG therefore provides the first network-access control layer before traffic reaches the Ubuntu virtualization host.
+Cockpit is therefore accessed through the VPN rather than directly through the Azure public IP.
+
+For example, when connected to WireGuard, the Cockpit interface can be accessed using the VPN address:
+
+```text
+https://10.200.200.1:9090
+```
+
+This approach prevents the Cockpit management interface from being directly exposed to the Internet.
 
 ---
 
-## 7. Deployment Result
+## Deployment Result
 
 At this stage, the Azure virtual machine is ready to serve as the virtualization host.
 
@@ -202,20 +222,37 @@ The resulting infrastructure is:
                     Microsoft Azure
                           │
                           ▼
-              ┌───────────────────────┐
-              │       Azure VM         │
-              │                        │
-              │ Ubuntu Server 22.04    │
-              │ 4 vCPU / 32 GB RAM     │
-              │                        │
-              │ Nested Virtualization  │
-              └───────────┬────────────┘
-                          │
-                          ▼
-                    QEMU / KVM
-                          │
-                          ▼
-                       EVE-NG VM
+              ┌────────────────────────┐
+              │        Azure VM         │
+              │                         │
+              │ Ubuntu Server 22.04     │
+              │ 4 vCPU / 32 GB RAM      │
+              │                         │
+              │ Nested Virtualization   │
+              └────────────┬────────────┘
+                           │
+                           ▼
+                     QEMU / KVM
+                           │
+                           ▼
+                        EVE-NG VM
+```
+
+The administrative access architecture is:
+
+```text
+                 Internet
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+          ▼                   ▼
+     SSH TCP/22         WireGuard UDP/51820
+   Admin IP only              │
+                              ▼
+                       VPN 10.200.200.0/24
+                              │
+                              ▼
+                       Cockpit TCP/9090
 ```
 
 The Azure VM is now ready for the installation of the virtualization stack.
