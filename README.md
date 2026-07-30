@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains our Bachelor's Final Year Project developed for the Systems and Network Engineering program.
+This repository contains my Bachelor's Final Year Project developed for the Systems and Network Engineering program.
 
 The project consists of designing, implementing, and validating a highly available enterprise network infrastructure connecting a Headquarters (HQ) and a Branch office using FortiGate SD-WAN and Site-to-Site IPsec VPN.
 
