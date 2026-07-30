@@ -47,7 +47,7 @@ The following steps were performed:
 
 After deployment, Azure provides a public IP address that can be used to establish an SSH connection to the Ubuntu server.
 
-![Azure VM overview](../screenshots/01-azure-vm-overview.png)
+![Azure VM overview](../screenshots/azure-vm-overview.png)
 
 **Figure 1 – Azure virtual machine overview and configuration**
 
@@ -80,7 +80,7 @@ The following inbound security rules were configured:
 
 The `Source port ranges` for the SSH rule remains **Any**, because the restriction is applied using the source IP address. The destination port is restricted to TCP `22`.
 
-![Azure Network Security](../screenshots/02-azure-network-security.png)
+![Azure Network Security](../screenshots/azure-network-security.png)
 
 **Figure 2 – Azure Network Security Group inbound rules**
 
@@ -96,10 +96,10 @@ After the deployment is completed, the Ubuntu server can be accessed remotely us
 ssh -i <private-key> <username>@<AZURE_PUBLIC_IP>
 ```
 
-### 3.2 Windows PowerShell
+### 3.2 Windows commande prompt
 
-```powershell
-ssh -i C:\Users\<USER>\.ssh\<private-key> <username>@<AZURE_PUBLIC_IP>
+```cli
+ssh -i /path/to/private_key <username>@<AZURE_PUBLIC_IP>
 ```
 
 Where:
@@ -152,7 +152,7 @@ hostnamectl
 
 This command was used to verify the Ubuntu host information and confirm that the server was correctly deployed before proceeding with the virtualization installation.
 
-![Ubuntu Host](../screenshots/03-ubuntu-host.png)
+![Ubuntu Host](../screenshots/ubuntu-host.png)
 
 **Figure 3 – Ubuntu Server host after deployment and initial configuration**
 
