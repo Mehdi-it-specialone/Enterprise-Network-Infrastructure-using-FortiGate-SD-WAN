@@ -185,7 +185,7 @@ The client public key is added to the WireGuard server configuration.
 
 The following keys are **fictional example values** included only to demonstrate the format of WireGuard key pairs.
 
-> **Security notice:** The keys below are **not real keys**, are not used by the deployed VPN infrastructure, and must not be used for production purposes.
+> **Security notice:** The keys below are **not real keys**, are not used by the deployed VPN infrastructure.
 
 ## 5.1 Example Pair 1 — Server
 
