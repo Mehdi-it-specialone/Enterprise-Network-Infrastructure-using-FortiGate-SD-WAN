@@ -100,7 +100,7 @@ The Azure NSG allows TCP port `9090` for Cockpit access.
 
 ### Screenshot
 
-![Cockpit Dashboard](../screenshots/04-cockpit-dashboard.png)
+![Cockpit Dashboard](../screenshots/cockpit-dashboard.png)
 
 **Figure 1 – Cockpit dashboard**
 
@@ -133,7 +133,7 @@ An **EVE-NG Community Edition 6.2.0-4** virtual machine was deployed using Cockp
 
 The official EVE-NG Full ISO was used:
 
-[EVE-NG CE 6.2.0-4 Full ISO](https://customers.eve-ng.net/eve-ce-prod-6.2.0-4-full.iso?utm_source=chatgpt.com)
+[EVE-NG CE 6.2.0-4 Full ISO](https://customers.eve-ng.net/eve-ce-prod-6.2.0-4-full.iso?utm)
 
 The Full ISO contains a customized, pre-packaged Ubuntu Server environment together with EVE-NG and its required components.
 
@@ -176,7 +176,7 @@ The configuration used for the project was:
 
 ### Screenshot
 
-![EVE-NG VM Configuration](../screenshots/05-eve-ng-vm-configuration.png)
+![EVE-NG VM Configuration](../screenshots/eve-ng-vm-configuration.png)
 
 **Figure 2 – EVE-NG virtual machine configuration in Cockpit**
 
@@ -320,7 +320,7 @@ After completing the installation, the EVE-NG management interface became availa
 
 ### Screenshot
 
-![EVE-NG Login](../screenshots/06-eve-ng-login.png)
+![EVE-NG Login](../screenshots/eve-ng-private-access.png)
 
 **Figure 3 – EVE-NG Community Edition login interface**
 
@@ -332,7 +332,7 @@ After authentication, the EVE-NG dashboard provides access to the network simula
 
 ### Screenshot
 
-![EVE-NG Dashboard](../screenshots/07-eve-ng-dashboard.png)
+![EVE-NG Dashboard](../screenshots/EVE-NG_Lab.png)
 
 **Figure 4 – EVE-NG network simulation dashboard**
 
